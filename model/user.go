@@ -10,15 +10,15 @@ type User struct {
 	gorm.Model
 	Name            string
 	Token           string
-	FollowCount     uint `gorm:"default:0"`
-	FollowerCount   uint `gorm:"default:0"`
-	IsFollow        bool `gorm:"default:false"`
+	FollowCount     int64 `gorm:"default:0"`
+	FollowerCount   int64 `gorm:"default:0"`
+	IsFollow        bool  `gorm:"default:false"`
 	Avatar          string
 	BackgroundImage string
 	Signature       string
-	TotalFavorited  uint `gorm:"default:0"`
-	WorkCount       uint `gorm:"default:0"`
-	FavoriteCount   uint `gorm:"default:0"`
+	TotalFavorited  int64 `gorm:"default:0"`
+	WorkCount       int64 `gorm:"default:0"`
+	FavoriteCount   int64 `gorm:"default:0"`
 }
 
 type UserDao struct {
@@ -29,7 +29,7 @@ var (
 	userOnce sync.Once
 )
 
-type UserStatus int
+type UserStatus int64
 
 const (
 	Inexistence UserStatus = iota //用户不存在
