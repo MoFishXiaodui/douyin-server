@@ -12,6 +12,14 @@ func TestCreate(t *testing.T) {
 	user := User{Name: "刀哥"}
 	_, err = NewUserDaoInstance().Create(user)
 	if err != nil {
-		t.Error("something wrong in the Create, err: ")
+		t.Errorf("something wrong in the Create, err: %v", err)
+	}
+
+	// 重复创建
+	user2 := User{Name: "刀哥"}
+
+	_, err = NewUserDaoInstance().Create(user2)
+	if err == nil {
+		t.Errorf("something wrong in the Create, err:%v", err)
 	}
 }

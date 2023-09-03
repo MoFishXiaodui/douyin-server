@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"gorm.io/gorm"
 	"sync"
 )
@@ -51,8 +52,9 @@ func NewUserDaoInstance() *UserDao {
 }
 
 func (*UserDao) Create(u User) (id uint, err error) {
-	err = db.First(u, "name = ?", u.Name).Error
+	err = db.First(&u, "Name = ?", u.Name).Error
 	if err == nil {
+		err = errors.New("The name has already been registered")
 		return 0, err
 	}
 	err = db.Create(&u).Error
