@@ -8,8 +8,8 @@ func TestUpdate(t *testing.T) {
 		t.Errorf("sth wrong happened when init MySQL: %v", err)
 	}
 	test_user := &User{Name: "daoge", WorkCount: 10}
-	expect1 := NewUserDaoIstance().Update(1, test_user)
-	expect2 := NewUserDaoIstance().Update(11, test_user)
+	expect1 := NewUserDaoInstance().Update(1, test_user)
+	expect2 := NewUserDaoInstance().Update(11, test_user)
 	if expect1 != Success {
 		t.Errorf("Expected %v do not match actual %v", expect1, Success)
 	}

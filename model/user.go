@@ -1,9 +1,8 @@
 package model
 
 import (
-	"sync"
-
 	"gorm.io/gorm"
+	"sync"
 )
 
 type User struct {
@@ -43,7 +42,7 @@ func UserInit() error {
 	return db.AutoMigrate(&User{})
 }
 
-func NewUserDaoIstance() *UserDao {
+func NewUserDaoInstance() *UserDao {
 	userOnce.Do(
 		func() {
 			userDao = &UserDao{}
@@ -87,7 +86,7 @@ func (*UserDao) Update(id uint, u *User) UserStatus {
 	user := &User{}
 	newuser := u
 
-	expect := NewUserDaoIstance().QuerywithId(id)
+	expect := NewUserDaoInstance().QuerywithId(id)
 	if expect == Existence {
 		db.First(user, "id = ?", id)
 		if newuser.Name != "" && user.Name == newuser.Name {
@@ -102,7 +101,7 @@ func (*UserDao) Update(id uint, u *User) UserStatus {
 }
 
 func (*UserDao) Delete(id uint) UserStatus {
-	//expect := NewUserDaoIstance().QuerywithId(id)
+	//expect := NewUserDaoInstance().QuerywithId(id)
 	user := &User{}
 	//db.Where("ID = ?", id).Delete(user)
 	db.First(user, "ID = ?", id).Delete(user)

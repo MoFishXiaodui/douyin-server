@@ -7,10 +7,10 @@ func TestQuery(t *testing.T) {
 	if err != nil {
 		t.Errorf("sth wrong happened when init MySQL: %v", err)
 	}
-	expect1 := NewUserDaoIstance().QuerywithName("刀哥")
-	expect2 := NewUserDaoIstance().QuerywithName("daoge")
-	expect3 := NewUserDaoIstance().QuerywithId(1)
-	expect4 := NewUserDaoIstance().QuerywithId(11)
+	expect1 := NewUserDaoInstance().QuerywithName("刀哥")
+	expect2 := NewUserDaoInstance().QuerywithName("daoge")
+	expect3 := NewUserDaoInstance().QuerywithId(1)
+	expect4 := NewUserDaoInstance().QuerywithId(11)
 
 	if expect1 != Existence {
 		t.Errorf("Expected %v do not match actual %v", expect1, 1)
