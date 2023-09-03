@@ -1,10 +1,7 @@
 package model
 
 import (
-	"dy/config"
 	"errors"
-	"fmt"
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"sync"
 )
@@ -35,23 +32,8 @@ func NewVideoDao() *VideoDao {
 	return videoDao
 }
 
-func InitVideo() {
-	addr, user, pwd, dbName := config.GetMySQLConfig()
-	dsn := fmt.Sprintf("%v:%v@tcp(%v)/%v?charset=utf8mb4&parseTime=True&loc=Local",
-		user, pwd, addr, dbName)
-	fmt.Println("准备连接数据库")
-	dbTmp, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		fmt.Println("fmt failed to connect database")
-		panic("failed to connect database")
-	}
-
-	err = dbTmp.AutoMigrate(&Video{})
-	if err != nil {
-		panic("failed to migrate to videos table")
-	}
-	fmt.Println("数据库连接成功，videos表对接成功")
-	db = dbTmp
+func InitVideo() error {
+	return db.AutoMigrate(&Video{})
 }
 
 func (dao *VideoDao) InsertNewVideo(Id, AuthorId, FavoriteCount, CommentCount uint, PlayUrl, CoverUrl, title string,
