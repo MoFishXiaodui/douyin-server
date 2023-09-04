@@ -86,15 +86,20 @@ func (*UserDao) QuerywithId(id uint) UserStatus {
 
 func (*UserDao) Update(id uint, u *User) UserStatus {
 	user := &User{}
+	user_ := &User{} // 如果新用户名已被使用，则指向那个用户名
 	newuser := u
 
 	expect := NewUserDaoInstance().QuerywithId(id)
 	if expect == Existence {
 		db.First(user, "id = ?", id)
-		if newuser.Name != "" && user.Name == newuser.Name {
-			return Existence
+		if newuser.Name != "" {
+			// 确认新用户名是否已存在于表格中
+			result := db.Where("name = ?", newuser.Name).First(user_).Error
+			if result == nil {
+				return Fail
+			}
 		}
-		db.Model(user).Updates(*newuser)
+		db.Model(user).Updates(newuser)
 		db.Save(user)
 		return Success
 	} else {
@@ -106,6 +111,9 @@ func (*UserDao) Delete(id uint) UserStatus {
 	//expect := NewUserDaoInstance().QuerywithId(id)
 	user := &User{}
 	//db.Where("ID = ?", id).Delete(user)
-	db.First(user, "ID = ?", id).Delete(user)
+	err := db.First(user, "ID = ?", id).Delete(user).Error
+	if err != nil {
+		return Fail
+	}
 	return Success
 }
