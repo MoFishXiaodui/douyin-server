@@ -12,8 +12,8 @@ type Video struct {
 	AuthorId      uint
 	PlayUrl       string `json:"play_url"`
 	CoverUrl      string `json:"cover_url"`
-	FavoriteCount int    `json:"favorite_count"`
-	CommentCount  int    `json:"comment_count"`
+	FavoriteCount int64  `json:"favorite_count"`
+	CommentCount  int64  `json:"comment_count"`
 	Title         string
 }
 
@@ -36,7 +36,7 @@ func InitVideo() error {
 	return db.AutoMigrate(&Video{})
 }
 
-func (dao *VideoDao) InsertNewVideo(Id, AuthorId uint, FavoriteCount, CommentCount int, PlayUrl, CoverUrl, title string,
+func (dao *VideoDao) InsertNewVideo(Id, AuthorId uint, FavoriteCount, CommentCount int64, PlayUrl, CoverUrl, title string,
 ) error {
 	err := dao.DeleteDeletedVideo(Id)
 	if err != nil {
@@ -68,7 +68,7 @@ func (*VideoDao) QueryVideo(Id uint) (*Video, error) {
 	return v, nil
 }
 
-func (*VideoDao) UpdateVideo(Id, AuthorId uint, FavoriteCount, CommentCount int, PlayUrl, CoverUrl, title string,
+func (*VideoDao) UpdateVideo(Id, AuthorId uint, FavoriteCount, CommentCount int64, PlayUrl, CoverUrl, title string,
 ) error {
 	video := &Video{Id: Id}
 	firstRes := db.First(video)
