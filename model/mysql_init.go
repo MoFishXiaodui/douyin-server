@@ -25,7 +25,7 @@ func MySQLInit() error {
 	db = dbTemp
 
 	// err = dbMigrate()
-	err = CollectInit()
+	err = ConnectTableCollect()
 	if err != nil {
 		panic("数据库初始化表格失败: " + err.Error())
 	}

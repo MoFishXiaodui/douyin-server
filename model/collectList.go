@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"sync"
 
 	"gorm.io/gorm"
@@ -28,7 +29,12 @@ func NewCollectDao() *CollectDao {
 	return collectDao
 }
 
-func CollectInit() error {
-	// Migrate the schema
-	return db.AutoMigrate(&TableCollect{})
+// 连接到 TableCollect
+func ConnectTableCollect() error {
+	err := db.AutoMigrate(&TableCollect{})
+	if err != nil {
+		panic("failed to migrate to collect table")
+	}
+	fmt.Println("Successful connect to table_collects!(～￣▽￣)～")
+	return err
 }
