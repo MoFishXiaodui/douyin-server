@@ -5,6 +5,7 @@ import (
 )
 
 func TestDelete(t *testing.T) {
+
 	err := MySQLInit()
 	if err != nil {
 		t.Errorf("sth wrong happened when init MySQL: %v", err)

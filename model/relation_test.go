@@ -131,10 +131,6 @@ func TestRelationUpdate(t *testing.T) {
 	actual1 := NewRelationDaoInstance().Update(1, 1, 1)
 	actual2 := NewRelationDaoInstance().Update(1, 2, 3)
 	actual3 := NewRelationDaoInstance().Update(1, 6, 2)
-	//actual4 := NewRelationDaoInstance().Update(1, 3, 1)
-	//actual5 := NewRelationDaoInstance().Update(6, 1, 2)
-	//actual6 := NewRelationDaoInstance().Update(7, 1, 1)
-
 	if actual1 != -1 {
 		t.Errorf("Expected %v do not match actual %v", -1, actual1)
 	}
@@ -144,15 +140,7 @@ func TestRelationUpdate(t *testing.T) {
 	if actual3 != 2 {
 		t.Errorf("Expected %v do not match actual %v", 2, actual3)
 	}
-	//if actual4 != 0 {
-	//	t.Errorf("Expected %v do not match actual %v", 0, actual4)
-	//}
-	//if actual5 != 2 {
-	//	t.Errorf("Expected %v do not match actual %v", 2, actual5)
-	//}
-	//if actual6 != 0 {
-	//	t.Errorf("Expected %v do not match actual %v", 0, actual6)
-	//}
+
 }
 
 func TestRelationDelete(t *testing.T) {
