@@ -78,3 +78,24 @@ func TestCollectDao_QueryCollectWithUserName(t *testing.T) {
 	}
 	// 对比数据库结果观察用 UserID 查到的记录和数据库中是否一致
 }
+
+// 软删除收藏记录
+func TestCollectDao_DeleteCollect(t *testing.T) {
+	err := MySQLInit()
+	if err != nil {
+		t.Errorf("sth wrong happened when init MySQL: %v", err)
+	}
+
+	err = NewCollectDao().DeleteCollect(3, 2)
+	assert.Equal(t, nil, err)
+}
+
+func TestCollectDao_DeleteDeletedCollect(t *testing.T) {
+	err := MySQLInit()
+	if err != nil {
+		t.Errorf("sth wrong happened when init MySQL: %v", err)
+	}
+
+	err = NewCollectDao().DeleteDeletedCollect(3, 2)
+	assert.Equal(t, nil, err)
+}

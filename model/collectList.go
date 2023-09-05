@@ -115,3 +115,24 @@ func (*CollectDao) QueryCollectWithUserName(UserName string) ([]TableCollect, er
 	// 切换到 collect_table 按 user_id 查找表格中的收藏信息
 	return NewCollectDao().QueryCollectWithUserID(UserID)
 }
+
+// 软删除
+func (*CollectDao) DeleteCollect(UserID uint, VideoId uint) error {
+	// 先检查该 record 是否存在
+	findRecord := &TableCollect{}
+	res := db.Where("video_id = ? and user_id = ?", VideoId, UserID).First(&findRecord)
+	fmt.Println(findRecord)
+	if res.Error != nil {
+		return errors.New("collect record can't be not found")
+	}
+
+	// 存在则进行软删除
+	res = db.Delete(&findRecord)
+	return res.Error
+}
+
+// 彻底删除
+func (*CollectDao) DeleteDeletedCollect(UserID uint, VideoID uint) error {
+	res := db.Raw("DELETE FROM table_collects WHERE `user_id` = ? and `video_id` = ? and `deleted_at` IS NOT NULL;", UserID, VideoID).Scan(&TableCollect{UserID: UserID, VideoID: VideoID})
+	return res.Error
+}
