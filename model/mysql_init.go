@@ -4,9 +4,10 @@ import (
 	"dy/config"
 	"errors"
 	"fmt"
+	"sync"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"sync"
 )
 
 var (
@@ -23,7 +24,8 @@ func MySQLInit() error {
 	}
 	db = dbTemp
 
-	err = dbMigrate()
+	// err = dbMigrate()
+	err = CollectInit()
 	if err != nil {
 		panic("数据库初始化表格失败: " + err.Error())
 	}
