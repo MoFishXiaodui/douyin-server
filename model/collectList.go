@@ -116,6 +116,18 @@ func (*CollectDao) QueryCollectWithUserName(UserName string) ([]TableCollect, er
 	return NewCollectDao().QueryCollectWithUserID(UserID)
 }
 
+// 直接用删除，再插入新 record 复用其他代码
+func (*CollectDao) UpdateCollect(OldUserID uint, OldVideoID uint, NewUserID uint, NewVideoID uint) error {
+	// 1. 检查老的 record 是否存在
+	// 2. 检查修改后的 NewUserID 和 NewVideoID 是否存在
+	// 3. 进行修改操作
+	err := NewCollectDao().DeleteCollect(OldUserID, OldVideoID)
+	if err != nil {
+		return errors.New("not find record you want to change")
+	}
+	return NewCollectDao().InsertNewCollectVideoIdUserId(NewVideoID, NewUserID)
+}
+
 // 软删除
 func (*CollectDao) DeleteCollect(UserID uint, VideoId uint) error {
 	// 先检查该 record 是否存在
