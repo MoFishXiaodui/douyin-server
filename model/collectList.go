@@ -103,3 +103,15 @@ func (*CollectDao) QueryCollectWithUserID(UserID uint) ([]TableCollect, error) {
 	// fmt.Println(videos)
 	return videos, nil
 }
+
+// 查找收藏信息信息（通过 user_name）
+func (*CollectDao) QueryCollectWithUserName(UserName string) ([]TableCollect, error) {
+	// 切换到 user_table 找到 name 对应的 user_id
+	UserInit()
+	user := User{}
+	db.Where("name = ?", UserName).First(&user)
+	UserID := user.ID
+
+	// 切换到 collect_table 按 user_id 查找表格中的收藏信息
+	return NewCollectDao().QueryCollectWithUserID(UserID)
+}

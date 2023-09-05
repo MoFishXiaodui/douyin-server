@@ -58,3 +58,23 @@ func TestCollectDao_QueryCollectWithUserID(t *testing.T) {
 	}
 	// 对比数据库结果观察用 UserID 查到的记录和数据库中是否一致
 }
+
+func TestCollectDao_QueryCollectWithUserName(t *testing.T) {
+	err := MySQLInit()
+	if err != nil {
+		t.Errorf("sth wrong happened when init MySQL: %v", err)
+	}
+
+	queryName := "frog"
+	videos, err := NewCollectDao().QueryCollectWithUserName(queryName)
+	if err != nil {
+		fmt.Println("the records is not found")
+		return
+	}
+
+	fmt.Printf("UserName query sucessfully! 共 %v 条结果，如下：\n", len(videos))
+	for i := 0; i < len(videos); i++ {
+		fmt.Printf("UserID: %v | UserName: %v | VideoID: %v\n", videos[i].UserID, queryName, videos[i].VideoID)
+	}
+	// 对比数据库结果观察用 UserID 查到的记录和数据库中是否一致
+}
