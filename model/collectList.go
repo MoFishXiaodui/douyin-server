@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
@@ -37,4 +38,68 @@ func ConnectTableCollect() error {
 	}
 	fmt.Println("Successful connect to table_collects!(～￣▽￣)～")
 	return err
+}
+
+// 创建一条新的收藏记录
+func (dao *CollectDao) InsertNewCollectVideoIdUserId(VideoID uint, UserID uint) error {
+	// 1. 检查该视频是否存在
+	// -------------待补充--------------------------------
+
+	// 2. 检查该用户是否存在
+	findUserId := NewUserDaoInstance().QuerywithId(UserID)
+	if findUserId != Existence {
+		return errors.New("user_id is inexistence")
+	}
+	// 3. 查看该用户是否已经收藏过该视频
+	record, err := NewCollectDao().QueryCollectWithUserID(UserID)
+	if err == nil {
+		// - 以收藏则返回提示：不能重复收藏
+		for i := 0; i < len(record); i++ {
+			if record[i].VideoID == VideoID {
+				return errors.New("don't collect the same record repeatly")
+			}
+		}
+		// - 不存在则创建新的收藏记录
+		res := db.Create(&TableCollect{
+			VideoID: VideoID,
+			UserID:  UserID,
+		})
+		if res.Error != nil {
+			return res.Error
+		}
+
+		// // 给 User 表对应用户的收藏 +1
+		// fmt.Println("test 1")
+		// err = dbMigrate()
+		// fmt.Println("test 2")
+		// if err != nil {
+		// 	return errors.New("初始化用户表失败:" + err.Error())
+		// }
+		// findUser := &User{}
+		// fmt.Println("test 3")
+		// res = db.Where("id = ?", UserID).First(&findUser)
+		// fmt.Println("test 4")
+		// fmt.Println(findUser)
+		// if res.Error != nil {
+		// 	return errors.New("user can't be not found")
+		// }
+		// fmt.Println("test 5")
+		// findUser.FavoriteCount++
+		// fmt.Println(findUser)
+		// db.Save(&findUser)
+
+		return res.Error
+	}
+	return err
+}
+
+// 查找收藏信息信息（通过 user_id）
+func (*CollectDao) QueryCollectWithUserID(UserID uint) ([]TableCollect, error) {
+	videos := []TableCollect{}
+	res := db.Where("user_id = ?", UserID).Find(&videos)
+	if res.Error != nil {
+		return nil, errors.New("collect record can't be not found")
+	}
+	// fmt.Println(videos)
+	return videos, nil
 }
