@@ -8,8 +8,9 @@ import (
 
 type User struct {
 	gorm.Model
+
 	Name            string
-	Token           string
+	Password        string
 	FollowCount     int64 `gorm:"default:0"`
 	FollowerCount   int64 `gorm:"default:0"`
 	IsFollow        bool  `gorm:"default:false"`
@@ -19,6 +20,7 @@ type User struct {
 	TotalFavorited  int64 `gorm:"default:0"`
 	WorkCount       int64 `gorm:"default:0"`
 	FavoriteCount   int64 `gorm:"default:0"`
+	Token           string
 }
 
 type UserDao struct {
@@ -32,9 +34,9 @@ var (
 type UserStatus int64
 
 const (
-	Inexistence UserStatus = iota //用户不存在
-	Existence                     //用户已存在
-	Success
+	//Inexistence UserStatus = iota //用户不存在
+	//Existence                     //用户已存在
+	Success UserStatus = iota
 	Fail
 )
 
@@ -57,6 +59,9 @@ func (*UserDao) Create(u User) (id uint, err error) {
 		err = errors.New("The name has already been registered")
 		return 0, err
 	}
+	if u.Password == "" || len(u.Password) > 32 {
+		return 0, errors.New("Please enter the correct password")
+	}
 	err = db.Create(&u).Error
 	if err != nil {
 		return 0, err
@@ -64,23 +69,23 @@ func (*UserDao) Create(u User) (id uint, err error) {
 	return u.ID, nil
 }
 
-func (*UserDao) QuerywithName(name string) UserStatus {
+func (*UserDao) QuerywithName(name string) *User {
 	user := &User{}
 	err := db.First(user, "name = ?", name).Error
 	if err != nil {
-		return Inexistence
+		return nil
 	} else {
-		return Existence
+		return user
 	}
 }
 
-func (*UserDao) QuerywithId(id uint) UserStatus {
+func (*UserDao) QuerywithId(id uint) *User {
 	user := &User{}
 	err := db.First(user, "id = ?", id).Error
 	if err != nil {
-		return Inexistence
+		return nil
 	} else {
-		return Existence
+		return user
 	}
 }
 
@@ -90,7 +95,7 @@ func (*UserDao) Update(id uint, u *User) UserStatus {
 	newuser := u
 
 	expect := NewUserDaoInstance().QuerywithId(id)
-	if expect == Existence {
+	if expect != nil {
 		db.First(user, "id = ?", id)
 		if newuser.Name != "" {
 			// 确认新用户名是否已存在于表格中
