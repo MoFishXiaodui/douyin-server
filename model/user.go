@@ -89,6 +89,16 @@ func (*UserDao) QuerywithId(id uint) *User {
 	}
 }
 
+func (*UserDao) QuerywithNameAndPassword(name, password string) *User {
+	user := &User{}
+	err := db.First(user, "name = ? AND password = ?", name, password).Error
+	if err != nil {
+		return nil
+	} else {
+		return user
+	}
+}
+
 func (*UserDao) Update(id uint, u *User) UserStatus {
 	user := &User{}
 	user_ := &User{} // 如果新用户名已被使用，则指向那个用户名

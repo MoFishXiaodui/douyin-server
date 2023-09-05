@@ -11,6 +11,8 @@ func TestQuery(t *testing.T) {
 	expect2 := NewUserDaoInstance().QuerywithName("daoge")
 	expect3 := NewUserDaoInstance().QuerywithId(1)
 	expect4 := NewUserDaoInstance().QuerywithId(11)
+	expect5 := NewUserDaoInstance().QuerywithNameAndPassword("刀哥", "123")
+	expect6 := NewUserDaoInstance().QuerywithNameAndPassword("刀哥", "456")
 
 	if expect1 == nil {
 		t.Errorf("Expected %v do not match actual %v", expect1, nil)
@@ -24,5 +26,11 @@ func TestQuery(t *testing.T) {
 	}
 	if expect4 != nil {
 		t.Errorf("Expected %v do not match actual a User", expect4)
+	}
+	if expect5 == nil {
+		t.Errorf("Expected %v do not match actual %v", expect5, nil)
+	}
+	if expect6 != nil {
+		t.Errorf("Expected %v do not match actual a User", expect6)
 	}
 }
