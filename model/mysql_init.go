@@ -15,7 +15,7 @@ var (
 )
 
 func MySQLInit() error {
-	addr, user, pwd, dbName := config.GetMySQLConfig()
+	user, pwd, addr, dbName := config.GetMySQLConfig()
 	dsn := fmt.Sprintf("%v:%v@tcp(%v)/%v?charset=utf8mb4&parseTime=True&loc=Local", user, pwd, addr, dbName)
 	dbTemp, err := gorm.Open(mysql.Open(dsn), &gorm.Config{TranslateError: true})
 	if err != nil {
@@ -48,12 +48,12 @@ func dbMigrate() error {
 		return errors.New("初始化用户表失败:" + err2.Error())
 	}
 
-	err1 := InitFavorite()
+	err := InitFavorite()
 	if err1 != nil {
 		return errors.New("初始化视频喜好失败" + err.Error())
 	}
 
-	err2 := InitVideo()
+	err = InitVideo()
 	if err2 != nil {
 		return errors.New("初始化视频信息失败" + err.Error())
 	}
