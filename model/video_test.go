@@ -6,7 +6,17 @@ import (
 	"testing"
 )
 
+/*func TestMain(m *testing.M) {
+	fmt.Println("STARTING TESTING")
+	_ = MySQLInit()
+	fmt.Println("Book initialized")
+
+	os.Exit(m.Run())
+}*/
+
 func TestVideoDao_InsertNewVideo(t *testing.T) {
+	//_ = MySQLInit()
+
 	var expected error = nil
 	res := NewVideoDao().InsertNewVideo(123, 456, 100, 200,
 		"www.baidu123.com", "www.baidu345.com", "baidu123")
@@ -30,17 +40,17 @@ func TestVideoDao_QueryVideo(t *testing.T) {
 		return
 	}
 	assert.Equal(t, expectedtitle, video.Title)
+}
 
+func TestVideoDao_QueryVideos(t *testing.T) {
+	results, _ := NewVideoDao().QueryVideos()
+	fmt.Println(results)
 }
 
 func TestVideoDao_UpdateVideo(t *testing.T) {
 	err := NewVideoDao().UpdateVideo(123, 456, 100, 200,
 		"www.wy123.com", "www.wy456.com", "wy123")
 	fmt.Println("err:", err)
-
-}
-
-func TestVideoDao_UpdateVideo2(t *testing.T) {
 
 }
 
