@@ -2,7 +2,7 @@
 
 ## 安装依赖
 ```shell
-go mod tiny
+go mod tidy
 ```
 
 ## 配置数据库
