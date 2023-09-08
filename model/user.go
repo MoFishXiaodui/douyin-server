@@ -1,24 +1,26 @@
 package model
 
 import (
-	"sync"
-
+	"errors"
 	"gorm.io/gorm"
+	"sync"
 )
 
 type User struct {
 	gorm.Model
+
 	Name            string
-	Token           string
-	FollowCount     uint `gorm:"default:0"`
-	FollowerCount   uint `gorm:"default:0"`
-	IsFollow        bool `gorm:"default:false"`
+	Password        string
+	FollowCount     int64 `gorm:"default:0"`
+	FollowerCount   int64 `gorm:"default:0"`
+	IsFollow        bool  `gorm:"default:false"`
 	Avatar          string
 	BackgroundImage string
 	Signature       string
-	TotalFavorited  uint `gorm:"default:0"`
-	WorkCount       uint `gorm:"default:0"`
-	FavoriteCount   uint `gorm:"default:0"`
+	TotalFavorited  int64 `gorm:"default:0"`
+	WorkCount       int64 `gorm:"default:0"`
+	FavoriteCount   int64 `gorm:"default:0"`
+	Token           string
 }
 
 type UserDao struct {
@@ -29,12 +31,12 @@ var (
 	userOnce sync.Once
 )
 
-type UserStatus int
+type UserStatus int64
 
 const (
-	Inexistence UserStatus = iota //用户不存在
-	Existence                     //用户已存在
-	Success
+	//Inexistence UserStatus = iota //用户不存在
+	//Existence                     //用户已存在
+	Success UserStatus = iota
 	Fail
 )
 
@@ -43,7 +45,7 @@ func UserInit() error {
 	return db.AutoMigrate(&User{})
 }
 
-func NewUserDaoIstance() *UserDao {
+func NewUserDaoInstance() *UserDao {
 	userOnce.Do(
 		func() {
 			userDao = &UserDao{}
@@ -52,9 +54,13 @@ func NewUserDaoIstance() *UserDao {
 }
 
 func (*UserDao) Create(u User) (id uint, err error) {
-	err = db.First(u, "name = ?", u.Name).Error
+	err = db.First(&u, "Name = ?", u.Name).Error
 	if err == nil {
+		err = errors.New("The name has already been registered")
 		return 0, err
+	}
+	if u.Password == "" || len(u.Password) > 32 {
+		return 0, errors.New("Please enter the correct password")
 	}
 	err = db.Create(&u).Error
 	if err != nil {
@@ -63,37 +69,52 @@ func (*UserDao) Create(u User) (id uint, err error) {
 	return u.ID, nil
 }
 
-func (*UserDao) QuerywithName(name string) UserStatus {
+func (*UserDao) QuerywithName(name string) *User {
 	user := &User{}
 	err := db.First(user, "name = ?", name).Error
 	if err != nil {
-		return Inexistence
+		return nil
 	} else {
-		return Existence
+		return user
 	}
 }
 
-func (*UserDao) QuerywithId(id uint) UserStatus {
+func (*UserDao) QuerywithId(id uint) *User {
 	user := &User{}
 	err := db.First(user, "id = ?", id).Error
 	if err != nil {
-		return Inexistence
+		return nil
 	} else {
-		return Existence
+		return user
+	}
+}
+
+func (*UserDao) QuerywithNameAndPassword(name, password string) *User {
+	user := &User{}
+	err := db.First(user, "name = ? AND password = ?", name, password).Error
+	if err != nil {
+		return nil
+	} else {
+		return user
 	}
 }
 
 func (*UserDao) Update(id uint, u *User) UserStatus {
 	user := &User{}
+	user_ := &User{} // 如果新用户名已被使用，则指向那个用户名
 	newuser := u
 
-	expect := NewUserDaoIstance().QuerywithId(id)
-	if expect == Existence {
+	expect := NewUserDaoInstance().QuerywithId(id)
+	if expect != nil {
 		db.First(user, "id = ?", id)
-		if newuser.Name != "" && user.Name == newuser.Name {
-			return Existence
+		if newuser.Name != "" {
+			// 确认新用户名是否已存在于表格中
+			result := db.Where("name = ?", newuser.Name).First(user_).Error
+			if result == nil {
+				return Fail
+			}
 		}
-		db.Model(user).Updates(*newuser)
+		db.Model(user).Updates(newuser)
 		db.Save(user)
 		return Success
 	} else {
@@ -102,9 +123,12 @@ func (*UserDao) Update(id uint, u *User) UserStatus {
 }
 
 func (*UserDao) Delete(id uint) UserStatus {
-	//expect := NewUserDaoIstance().QuerywithId(id)
+	//expect := NewUserDaoInstance().QuerywithId(id)
 	user := &User{}
 	//db.Where("ID = ?", id).Delete(user)
-	db.First(user, "ID = ?", id).Delete(user)
+	err := db.First(user, "ID = ?", id).Delete(user).Error
+	if err != nil {
+		return Fail
+	}
 	return Success
 }

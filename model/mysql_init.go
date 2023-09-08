@@ -39,9 +39,13 @@ func GetMySQLdb() *gorm.DB {
 }
 
 func dbMigrate() error {
-	err := UserInit()
-	if err != nil {
-		return errors.New("初始化用户表失败:" + err.Error())
+	err1 := UserInit()
+	err2 := RelationInit()
+	if err1 != nil {
+		return errors.New("初始化用户表失败:" + err1.Error())
+	}
+	if err2 != nil {
+		return errors.New("初始化用户表失败:" + err2.Error())
 	}
 
 	err1 := InitFavorite()
