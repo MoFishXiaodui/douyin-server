@@ -17,17 +17,17 @@ type Video struct {
 	Title         string
 }
 
-type VideoDao struct {
+type VideoDao struct { //帮助理解，这世上有一个猴子种类
 }
 
 var (
 	VideoDaoOnce sync.Once
-	videoDao     *VideoDao
+	videoDao     *VideoDao //有一只猴子，指向一只猴子
 )
 
 func NewVideoDao() *VideoDao {
 	VideoDaoOnce.Do(func() {
-		videoDao = &VideoDao{}
+		videoDao = &VideoDao{} //创建了一只猴子，指向有一只猴子实体
 	})
 	return videoDao
 }
@@ -66,6 +66,15 @@ func (*VideoDao) QueryVideo(Id uint) (*Video, error) {
 		return nil, errors.New("can't not find")
 	}
 	return v, nil
+}
+
+func (*VideoDao) QueryVideos() ([]Video, error) {
+	results := []Video{}
+	res := db.Order("created_at desc").Limit(30).Find(&results)
+	if res.Error != nil {
+		return nil, errors.New("can't not find")
+	}
+	return results, nil
 }
 
 func (*VideoDao) UpdateVideo(Id, AuthorId uint, FavoriteCount, CommentCount int64, PlayUrl, CoverUrl, title string,
