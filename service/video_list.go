@@ -57,6 +57,7 @@ func (f *QueryListInfoFlow) prepareListInfo() error {
 	if err != nil {
 		return errors.New("获取dao层的video数据出错")
 	}
+	f.list = &VideoList{}
 	f.list.List = make([]Video, len(res))
 	for i, _ := range res {
 		f.list.List[i].ID = res[i].Id
