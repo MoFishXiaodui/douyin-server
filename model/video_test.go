@@ -15,7 +15,7 @@ import (
 }*/
 
 func TestVideoDao_InsertNewVideo(t *testing.T) {
-	//_ = MySQLInit()
+	_ = MySQLInit()
 
 	var expected error = nil
 	res := NewVideoDao().InsertNewVideo(123, 456, 100, 200,
@@ -43,6 +43,8 @@ func TestVideoDao_QueryVideo(t *testing.T) {
 }
 
 func TestVideoDao_QueryVideos(t *testing.T) {
+	_ = MySQLInit()
+
 	results, _ := NewVideoDao().QueryVideos()
 	fmt.Println(results)
 }
