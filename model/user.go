@@ -2,8 +2,9 @@ package model
 
 import (
 	"errors"
-	"gorm.io/gorm"
 	"sync"
+
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -56,11 +57,11 @@ func NewUserDaoInstance() *UserDao {
 func (*UserDao) Create(u User) (id uint, err error) {
 	err = db.First(&u, "Name = ?", u.Name).Error
 	if err == nil {
-		err = errors.New("The name has already been registered")
+		err = errors.New("the name has already been registered")
 		return 0, err
 	}
 	if u.Password == "" || len(u.Password) > 32 {
-		return 0, errors.New("Please enter the correct password")
+		return 0, errors.New("please enter the correct password")
 	}
 	err = db.Create(&u).Error
 	if err != nil {
