@@ -8,8 +8,8 @@ import (
 
 type User struct {
 	gorm.Model
-
-	Name            string
+	//ID int64
+	UserName        string
 	Password        string
 	FollowCount     int64 `gorm:"default:0"`
 	FollowerCount   int64 `gorm:"default:0"`
@@ -54,7 +54,7 @@ func NewUserDaoInstance() *UserDao {
 }
 
 func (*UserDao) Create(u User) (id uint, err error) {
-	err = db.First(&u, "Name = ?", u.Name).Error
+	err = db.First(&u, "user_name = ?", u.UserName).Error
 	if err == nil {
 		err = errors.New("The name has already been registered")
 		return 0, err
@@ -71,7 +71,7 @@ func (*UserDao) Create(u User) (id uint, err error) {
 
 func (*UserDao) QuerywithName(name string) *User {
 	user := &User{}
-	err := db.First(user, "name = ?", name).Error
+	err := db.First(user, "user_name = ?", name).Error
 	if err != nil {
 		return nil
 	} else {
@@ -91,7 +91,7 @@ func (*UserDao) QuerywithId(id uint) *User {
 
 func (*UserDao) QuerywithNameAndPassword(name, password string) *User {
 	user := &User{}
-	err := db.First(user, "name = ? AND password = ?", name, password).Error
+	err := db.First(user, "user_name = ? AND password = ?", name, password).Error
 	if err != nil {
 		return nil
 	} else {
@@ -107,9 +107,9 @@ func (*UserDao) Update(id uint, u *User) UserStatus {
 	expect := NewUserDaoInstance().QuerywithId(id)
 	if expect != nil {
 		db.First(user, "id = ?", id)
-		if newuser.Name != "" {
+		if newuser.UserName != "" {
 			// 确认新用户名是否已存在于表格中
-			result := db.Where("name = ?", newuser.Name).First(user_).Error
+			result := db.Where("user_name = ?", newuser.UserName).First(user_).Error
 			if result == nil {
 				return Fail
 			}
@@ -126,7 +126,7 @@ func (*UserDao) Delete(id uint) UserStatus {
 	//expect := NewUserDaoInstance().QuerywithId(id)
 	user := &User{}
 	//db.Where("ID = ?", id).Delete(user)
-	err := db.First(user, "ID = ?", id).Delete(user).Error
+	err := db.First(user, "id = ?", id).Delete(user).Error
 	if err != nil {
 		return Fail
 	}
