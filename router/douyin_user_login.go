@@ -7,7 +7,6 @@ import (
 
 // 接收一个HTTP请求
 func DouyinUserLogin(c *gin.Context) {
-	var data *controller.UserLogin
-	data = controller.UserLoginGet(c.Query("user_name"), c.Query("password"))
+	data := controller.UserLoginPost(c.Query("username"), c.Query("password"))
 	c.JSON(200, data)
 }
