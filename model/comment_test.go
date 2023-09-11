@@ -1,15 +1,15 @@
-package main
+package model
 
 import (
 	"testing"
 )
 
 func TestCommentDao(t *testing.T) {
-	db, err := gorm.Open("sqlite3", "test.db")
-	if err != nil {
-		panic("failed to connect database")
-	}
-	defer db.Close()
+	// db, err := gorm.Open("sqlite3", "test.db")
+	// if err != nil {
+	// 	panic("failed to connect database")
+	// }
+	// defer db.Close()
 
 	// Migrate the schema
 	db.AutoMigrate(&Comment{})
