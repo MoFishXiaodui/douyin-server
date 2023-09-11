@@ -2,8 +2,9 @@ package model
 
 import (
 	"errors"
-	"gorm.io/gorm"
 	"sync"
+
+	"gorm.io/gorm"
 )
 
 // 注：Relationship的值受Id的相对位置的影响，故后续传参数需注意
@@ -50,12 +51,12 @@ func NewRelationDaoInstance() *RelationDao {
 
 func (*RelationDao) Create(r *Relation) (UserId1, UserId2 int64, err error) {
 	if r.UserId1 == r.UserId2 {
-		err = errors.New("The UserIds must be different")
+		err = errors.New("the UserIds must be different")
 		return -1, -1, err
 	}
 	err = db.Where("(user_id1 = ? AND user_id2 = ?) OR (user_id2 = ? AND user_id1 = ?)", r.UserId1, r.UserId2, r.UserId1, r.UserId2).First(r).Error
 	if err == nil {
-		err = errors.New("The relationship has already existed")
+		err = errors.New("the relationship has already existed")
 		return -1, -1, err
 	}
 
