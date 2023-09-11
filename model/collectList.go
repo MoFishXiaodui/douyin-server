@@ -31,7 +31,7 @@ func NewCollectDao() *CollectDao {
 }
 
 // 连接到 TableCollect
-func ConnectTableCollect() error {
+func TableCollectInit() error {
 	err := db.AutoMigrate(&TableCollect{})
 	if err != nil {
 		panic("failed to migrate to collect table")
@@ -44,13 +44,33 @@ func ConnectTableCollect() error {
 func (dao *CollectDao) InsertNewCollectVideoIdUserId(VideoID uint, UserID uint) error {
 	// 1. 检查该视频是否存在
 	// -------------待补充--------------------------------
+	errVideo := VideoInit()
+	if errVideo != nil {
+		return errors.New("video_table connect failed")
+	}
+
+	_, err := NewVideoDao().QueryVideo(VideoID)
+	if err != nil {
+		return errors.New("video_id is inexistence")
+	}
 
 	// 2. 检查该用户是否存在
+	errUser := UserInit()
+	if errUser != nil {
+		return errors.New("user_table connect failed")
+	}
+
 	findUserId := NewUserDaoInstance().QuerywithId(UserID)
-	if findUserId != nil {
+	if findUserId == nil {
 		return errors.New("user_id is inexistence")
 	}
+
 	// 3. 查看该用户是否已经收藏过该视频
+	errTableCollect := TableCollectInit()
+	if errTableCollect != nil {
+		return errors.New("table_collects connect failed")
+	}
+
 	record, err := NewCollectDao().QueryCollectWithUserID(UserID)
 	if err == nil {
 		// - 以收藏则返回提示：不能重复收藏
@@ -70,7 +90,7 @@ func (dao *CollectDao) InsertNewCollectVideoIdUserId(VideoID uint, UserID uint) 
 
 		// // 给 User 表对应用户的收藏 +1
 		// fmt.Println("test 1")
-		// err = dbMigrate()
+		// err = UserInit()
 		// fmt.Println("test 2")
 		// if err != nil {
 		// 	return errors.New("初始化用户表失败:" + err.Error())

@@ -2,8 +2,9 @@ package model
 
 import (
 	"errors"
-	"gorm.io/gorm"
 	"sync"
+
+	"gorm.io/gorm"
 )
 
 type Video struct {
@@ -32,7 +33,7 @@ func NewVideoDao() *VideoDao {
 	return videoDao
 }
 
-func InitVideo() error {
+func VideoInit() error {
 	return db.AutoMigrate(&Video{})
 }
 

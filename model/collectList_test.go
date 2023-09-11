@@ -18,7 +18,7 @@ func TestCollectDao_InsertNewCollectVideoIdUserId_1(t *testing.T) {
 	var expected error = nil
 	var user_id, video_id uint
 	user_id = 3
-	video_id = 6
+	video_id = 123
 	res := NewCollectDao().InsertNewCollectVideoIdUserId(video_id, user_id)
 	assert.Equal(t, expected, res)
 
@@ -100,7 +100,7 @@ func TestCollectDao_DeleteCollect(t *testing.T) {
 		t.Errorf("sth wrong happened when init MySQL: %v", err)
 	}
 
-	err = NewCollectDao().DeleteCollect(3, 2)
+	err = NewCollectDao().DeleteCollect(3, 123)
 	assert.Equal(t, nil, err)
 }
 

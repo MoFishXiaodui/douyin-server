@@ -2,8 +2,9 @@ package model
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 /*func TestMain(m *testing.M) {
@@ -15,7 +16,7 @@ import (
 }*/
 
 func TestVideoDao_InsertNewVideo(t *testing.T) {
-	//_ = MySQLInit()
+	_ = MySQLInit()
 
 	var expected error = nil
 	res := NewVideoDao().InsertNewVideo(123, 456, 100, 200,
