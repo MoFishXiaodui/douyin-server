@@ -2,7 +2,6 @@ package model
 
 import (
 	"dy/config"
-	"errors"
 	"fmt"
 	"sync"
 
@@ -40,24 +39,24 @@ func GetMySQLdb() *gorm.DB {
 	return db
 }
 
-func dbMigrate() error {
-	err1 := UserInit()
-	err2 := RelationInit()
-	if err1 != nil {
-		return errors.New("初始化用户表失败:" + err1.Error())
-	}
-	if err2 != nil {
-		return errors.New("初始化用户表失败:" + err2.Error())
-	}
+// func dbMigrate() error {
+// 	err1 := UserInit()
+// 	err2 := RelationInit()
+// 	if err1 != nil {
+// 		return errors.New("初始化用户表失败:" + err1.Error())
+// 	}
+// 	if err2 != nil {
+// 		return errors.New("初始化用户表失败:" + err2.Error())
+// 	}
 
-	err1 := InitFavorite()
-	if err1 != nil {
-		return errors.New("初始化视频喜好失败" + err.Error())
-	}
+// 	err1 = InitFavorite()
+// 	if err1 != nil {
+// 		return errors.New("初始化视频喜好失败" + err1.Error())
+// 	}
 
-	err2 := InitVideo()
-	if err2 != nil {
-		return errors.New("初始化视频信息失败" + err.Error())
-	}
-	return nil
-}
+// 	err2 = InitVideo()
+// 	if err2 != nil {
+// 		return errors.New("初始化视频信息失败" + err2.Error())
+// 	}
+// 	return nil
+// }
