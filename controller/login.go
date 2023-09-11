@@ -9,7 +9,7 @@ type LoginData struct {
 }
 
 func ControllerUserQueryLogin(name, password string) *LoginData {
-	userinfo := service.UserQueryLogin(name, password)
+	userinfo := service.UserLogin(name, password)
 	if userinfo.State != true {
 		return &LoginData{
 			StatusCode: -1,

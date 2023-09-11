@@ -3,41 +3,45 @@ package service
 import (
 	"dy/model"
 	"errors"
+	"fmt"
 )
 
 type UserInfo struct {
-	Token string
-	State bool
+	Token  string
+	State  bool
+	UserId uint
 }
-type UserQueryLoginFlow struct {
-	Name     string
+type UserLoginFlow struct {
+	UserName string
 	Password string
 	UserInfo *UserInfo
 }
 
 // prepareInfo用来通过底层模型获取对应数据(token)的函数
-func (f *UserQueryLoginFlow) prepareInfo() error {
-	user := model.NewUserDaoInstance().QuerywithName(f.Name)
+func (f *UserLoginFlow) prepareInfo() error {
+	user := model.NewUserDaoInstance().QuerywithName(f.UserName)
 	if user == nil {
 		return errors.New("This user does not exist")
 	}
 	f.UserInfo.Token = user.Token
+	f.UserInfo.UserId = user.ID
 	return nil
 }
 
 // NewUserQueryLoginFlow 创建新UserQueryLoginFlow实例的函数
-func NewUserQueryLoginFlow(name, password string) *UserQueryLoginFlow {
-	return &UserQueryLoginFlow{Name: name, Password: password}
+func NewUserLoginFlow(name, password string) *UserLoginFlow {
+	return &UserLoginFlow{UserName: name, Password: password}
 }
 
-func (f *UserQueryLoginFlow) DO() *UserInfo {
+func (f *UserLoginFlow) DO() *UserInfo {
 	if len(f.Password) > 32 {
 		f.UserInfo.State = false
 		return f.UserInfo
 	}
 	f.UserInfo = &UserInfo{}
+	user := model.NewUserDaoInstance().QuerywithNameAndPassword(f.UserName, f.Password)
+	fmt.Println(f.UserName, f.UserInfo.State, "tt")
 
-	user := model.NewUserDaoInstance().QuerywithNameAndPassword(f.Name, f.Password)
 	if user == nil {
 		f.UserInfo.State = false
 		return f.UserInfo
@@ -51,8 +55,8 @@ func (f *UserQueryLoginFlow) DO() *UserInfo {
 	return f.UserInfo
 }
 
-// UserQueryLogin 外部来了一个请求，我们创建一个新的UserQueryLoginFlow结构来处理，这个结构的Do()方法最终返回想要的结果
-func UserQueryLogin(name, password string) *UserInfo {
+// UserLogin 外部来了一个请求，我们创建一个新的UserLoginFlow结构来处理，这个结构的Do()方法最终返回想要的结果
+func UserLogin(name, password string) *UserInfo {
 
-	return NewUserQueryLoginFlow(name, password).DO()
+	return NewUserLoginFlow(name, password).DO()
 }
