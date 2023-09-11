@@ -47,7 +47,7 @@ func (dao *CollectDao) InsertNewCollectVideoIdUserId(VideoID uint, UserID uint) 
 
 	// 2. 检查该用户是否存在
 	findUserId := NewUserDaoInstance().QuerywithId(UserID)
-	if findUserId != Existence {
+	if findUserId != nil {
 		return errors.New("user_id is inexistence")
 	}
 	// 3. 查看该用户是否已经收藏过该视频
