@@ -49,5 +49,15 @@ func dbMigrate() error {
 	if err2 != nil {
 		return errors.New("初始化用户表失败:" + err2.Error())
 	}
+
+	err1 := InitFavorite()
+	if err1 != nil {
+		return errors.New("初始化视频喜好失败" + err.Error())
+	}
+
+	err2 := InitVideo()
+	if err2 != nil {
+		return errors.New("初始化视频信息失败" + err.Error())
+	}
 	return nil
 }
