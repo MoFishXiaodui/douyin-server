@@ -2,7 +2,7 @@
 
 ## 安装依赖
 ```shell
-go mod tiny
+go mod tidy
 ```
 
 ## 配置数据库
@@ -18,5 +18,6 @@ go mod tiny
 - [perf] 性能优化
 - [test] 新增测试用例
 - [docs] 文档说明
+- [git] 与git相关的设置
 
 请勿提交没有意义的代码到git仓库中！
