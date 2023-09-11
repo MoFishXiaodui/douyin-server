@@ -15,7 +15,7 @@ var (
 )
 
 func MySQLInit() error {
-	user, pwd, addr, dbName := config.GetMySQLConfig()
+	addr, user, pwd, dbName := config.GetMySQLConfig()
 	dsn := fmt.Sprintf("%v:%v@tcp(%v)/%v?charset=utf8mb4&parseTime=True&loc=Local", user, pwd, addr, dbName)
 	dbTemp, err := gorm.Open(mysql.Open(dsn), &gorm.Config{TranslateError: true})
 	if err != nil {

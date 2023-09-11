@@ -3,7 +3,6 @@ package service
 import (
 	"dy/model"
 	"errors"
-	"strings"
 	"time"
 )
 
@@ -43,23 +42,27 @@ type QueryListInfoFlow struct {
 
 func (f *QueryListInfoFlow) checkParam() error {
 
-	if f.LastTime.Before(time.Time{}) || strings.ContainsAny(
-		f.LastTime.String(), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") {
-		return errors.New("Invalid lastTime")
-	}
+	//if f.LastTime.Before(time.Time{}) || strings.ContainsAny(
+	//	f.LastTime.String(), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") {
+	//	return errors.New("Invalid lastTime")
+	//}
 	return nil
 }
 
-func (f *QueryListInfoFlow) prepareListInfo() error {
+func (f *QueryListInfoFlow) prepareListInfo() (error, time.Time) {
 	author := User{"213124sadaf", "23123", 1234, 1235, 4521,
 		123, false, "wjl", "sunshine", "snoeeq", 456}
 	res, err := model.NewVideoDao().QueryVideos()
 	if err != nil {
-		return errors.New("获取dao层的video数据出错")
+		return errors.New("获取dao层的video数据出错"), time.Now()
 	}
 	f.list = &VideoList{}
 	f.list.List = make([]Video, len(res))
-	for i, _ := range res {
+	if len(res) == 0 {
+		return nil, time.Now()
+	}
+	minTime := res[0].CreatedAt
+	for i := 0; i < len(res); i++ {
 		f.list.List[i].ID = res[i].Id
 		f.list.List[i].Title = res[i].Title
 		f.list.List[i].PlayURL = res[i].PlayUrl
@@ -68,8 +71,11 @@ func (f *QueryListInfoFlow) prepareListInfo() error {
 		f.list.List[i].CommentCount = res[i].CommentCount
 		f.list.List[i].Author = author
 		f.list.List[i].IsFavorite = true
+		if minTime.After(res[i].CreatedAt) {
+			minTime = res[i].CreatedAt
+		}
 	}
-	return nil
+	return nil, minTime
 }
 
 func QueryListInfo(lastTime time.Time) (*VideoList, error) {
@@ -84,7 +90,7 @@ func (f *QueryListInfoFlow) Do() (*VideoList, error) {
 	if err := f.checkParam(); err != nil {
 		return nil, err
 	}
-	if err := f.prepareListInfo(); err != nil {
+	if err, _ := f.prepareListInfo(); err != nil {
 		return nil, err
 	}
 	return f.list, nil
