@@ -15,3 +15,8 @@ package config
 //	useSSL = true // 如果用http，则填false，如果用https，则填true
 //	return endPoint, accessKey, secretKey, useSSL
 //}
+
+//func GetJWTconfig() (jwtSecretKey []byte) {
+//	jwtSecretKey = []byte("yichuan buneng xielou de guanjian miyue")
+//	return jwtSecretKey
+//}

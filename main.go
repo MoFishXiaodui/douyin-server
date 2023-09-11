@@ -14,5 +14,6 @@ func main() {
 
 	r := gin.Default()
 	r.GET("/douyin/feed/", router.DouyinFeed)
+	r.POST("/douyin/user/login/", router.DouyinUserLogin)
 	r.Run() // 监听并在 0.0.0.0:8080 上启动服务
 }
