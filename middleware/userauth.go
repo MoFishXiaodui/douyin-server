@@ -2,11 +2,9 @@ package middleware
 
 import (
 	"dy/config"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -15,6 +13,10 @@ func UserAuth(c *gin.Context) {
 
 	// Get the token
 	tokenString := c.Query("token")
+	if tokenString == "" {
+		//	如果在Query参数找不到，就试着在 application/form-data 找一下
+		tokenString = c.Request.FormValue("token")
+	}
 
 	// 解码验证
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -22,7 +24,8 @@ func UserAuth(c *gin.Context) {
 	})
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{
-			"msg": "token解析出错",
+			"status_code": -1,
+			"status_msg":  "token解析出错",
 		})
 		return
 	}
@@ -33,36 +36,20 @@ func UserAuth(c *gin.Context) {
 		exp := claims["exp"].(float64)
 		if float64(time.Now().Unix()) > exp {
 			c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{
-				"msg": "token expired",
+				"status_code": -1,
+				"status_msg":  "token expired",
 			})
 			return
 		}
+		// 暂存userId
+		c.Set("UserId", claims["UserId"].(float64))
 
-		// 确认用户是否正确
-		fmt.Println(claims["UserId"])
-		// 先把query参数转成整数
-		userId, errUserId := strconv.Atoi(c.Query("user_id"))
-		if errUserId != nil {
-			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
-				"msg": "unexpected user_id",
-			})
-		}
-		//fmt.Println(reflect.TypeOf(claims["UserId"]))	// float64
-		//fmt.Println(reflect.TypeOf(userId))	// int
-
-		if float64(userId) == claims["UserId"].(float64) {
-			// 继续
-			c.Next()
-		} else {
-			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
-				"msg": "token 校验失败",
-				// 冒用他人userID
-			})
-			return
-		}
+		// 继续
+		c.Next()
 	} else {
 		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{
-			"msg": "token失效",
+			"status_code": -1,
+			"status_msg":  "token失效",
 		})
 		return
 	}

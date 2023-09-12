@@ -110,10 +110,10 @@ func (*UserDao) QuerywithNameAndPassword(name, password string) *User {
 	}
 }
 
-func (*UserDao) QuerywithIdAndToken(user_id, token string) *User {
+func (*UserDao) QuerywithIdAndToken(userId string) *User {
 	user := &User{}
-	userIdInt, _ := strconv.Atoi(user_id)
-	err := db.First(user, "id = ? and token = ?", uint(userIdInt), token).Error
+	userIdInt, _ := strconv.Atoi(userId)
+	err := db.First(user, "id = ?", uint(userIdInt)).Error
 	if err != nil {
 		return nil
 	} else {

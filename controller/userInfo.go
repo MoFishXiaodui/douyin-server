@@ -22,8 +22,8 @@ type User struct {
 	WorkCount       int64  `json:"work_count"`       // 作品数
 }
 
-func ControllerUserInfoQuery(user_id, token string) *UserInfo {
-	userInfo := service.UserInfoQuery(user_id, token)
+func UserInfoQuery(userId string) *UserInfo {
+	userInfo := service.UserInfoQuery(userId)
 	if !userInfo.State {
 		return &UserInfo{
 			StatusCode: -1,
