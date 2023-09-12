@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"strconv"
 	"sync"
 
 	"gorm.io/gorm"
@@ -18,7 +19,7 @@ type User struct {
 	Avatar          string
 	BackgroundImage string
 	Signature       string
-	TotalFavorited  int64 `gorm:"default:0"`
+	TotalFavorited  string
 	WorkCount       int64 `gorm:"default:0"`
 	FavoriteCount   int64 `gorm:"default:0"`
 	Token           string
@@ -90,9 +91,29 @@ func (*UserDao) QuerywithId(id uint) *User {
 	}
 }
 
+func (*UserDao) QueryUsers() ([]User, error) {
+	results := []User{}
+	res := db.Order("created_at desc").Limit(30).Find(&results)
+	if res.Error != nil {
+		return nil, errors.New("can't not find")
+	}
+	return results, nil
+}
+
 func (*UserDao) QuerywithNameAndPassword(name, password string) *User {
 	user := &User{}
 	err := db.First(user, "user_name = ? AND password = ?", name, password).Error
+	if err != nil {
+		return nil
+	} else {
+		return user
+	}
+}
+
+func (*UserDao) QuerywithIdAndToken(user_id, token string) *User {
+	user := &User{}
+	userIdInt, _ := strconv.Atoi(user_id)
+	err := db.First(user, "id = ? and token = ?", uint(userIdInt), token).Error
 	if err != nil {
 		return nil
 	} else {
