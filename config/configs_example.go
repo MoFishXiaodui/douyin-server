@@ -5,7 +5,7 @@ package config
 //	user = "your_mysql__username"
 //	pwd = "your_mysql_password"
 //	dbName = "your_mysql_database_name"
-//	return addr, user, pwd, dbName
+//	return user, pwd, addr, dbName
 //}
 
 //func GetMinioConfig() (endPoint, accessKey, secretKey string, useSSL bool) {
