@@ -16,12 +16,17 @@ type DouyinFeed struct {
 	// 返回状态描述
 	StatusMsg string `json:"status_msg"`
 	// 视频列表
-	VideoList *service.VideoList `json:"video_list"`
+	VideoList []service.Video `json:"video_list"`
 }
 
 func DouyinFeedGet(latestTimeStr, token string) *DouyinFeed {
 	res := &DouyinFeed{}
 	latestTime, err := strconv.ParseInt(latestTimeStr, 10, 64)
+	if latestTime == 0 {
+		fmt.Println("zero")
+		latestTime = time.Now().Unix()
+	}
+	fmt.Println("latestTime", latestTime)
 	if err != nil {
 		res.StatusCode = http.StatusNotAcceptable
 		res.StatusMsg = "时间戳格式不正确"
@@ -32,10 +37,10 @@ func DouyinFeedGet(latestTimeStr, token string) *DouyinFeed {
 		res.StatusCode = http.StatusInternalServerError
 		res.StatusMsg = "服务器发生未知错误"
 	}
-	res.StatusCode = http.StatusOK
+	res.StatusCode = 0
 	res.StatusMsg = "success"
-	res.VideoList = videoList
-	fmt.Println("videoList", videoList)
+	res.VideoList = videoList.List
+
 	res.NextTime = time.Now().Unix() // 尚未开发
 	return res
 }

@@ -21,20 +21,6 @@ type Video struct {
 	Title         string `json:"title"`          // 视频标题
 }
 
-type User struct {
-	Avatar          string `json:"avatar"`           // 用户头像
-	BackgroundImage string `json:"background_image"` // 用户个人页顶部大图
-	FavoriteCount   int64  `json:"favorite_count"`   // 喜欢数
-	FollowCount     int64  `json:"follow_count"`     // 关注总数
-	FollowerCount   int64  `json:"follower_count"`   // 粉丝总数
-	ID              uint   `json:"id"`               // 用户id
-	IsFollow        bool   `json:"is_follow"`        // true-已关注，false-未关注
-	Name            string `json:"name"`             // 用户名称
-	Signature       string `json:"signature"`        // 个人简介
-	TotalFavorited  string `json:"total_favorited"`  // 获赞数量
-	WorkCount       int64  `json:"work_count"`       // 作品数
-}
-
 type QueryListInfoFlow struct {
 	LastTime time.Time
 	list     *VideoList
@@ -50,8 +36,9 @@ func (f *QueryListInfoFlow) checkParam() error {
 }
 
 func (f *QueryListInfoFlow) prepareListInfo() (error, time.Time) {
-	author := User{"213124sadaf", "23123", 1234, 1235, 4521,
-		123, false, "wjl", "sunshine", "snoeeq", 456}
+	//author := User{"213124sadaf", "23123", 1234, 1235, 4521,
+	//	1, false, "wjl", "sunshine", "snoeeq", 456}
+	author := User{}
 	res, err := model.NewVideoDao().QueryVideos()
 	if err != nil {
 		return errors.New("获取dao层的video数据出错"), time.Now()
@@ -65,8 +52,10 @@ func (f *QueryListInfoFlow) prepareListInfo() (error, time.Time) {
 	for i := 0; i < len(res); i++ {
 		f.list.List[i].ID = res[i].Id
 		f.list.List[i].Title = res[i].Title
-		f.list.List[i].PlayURL = res[i].PlayUrl
-		f.list.List[i].CoverURL = res[i].CoverUrl
+		playUrl, _ := model.NewMinioDao().GetSignedURL(res[i].PlayUrl)
+		f.list.List[i].PlayURL = playUrl
+		//f.list.List[i].CoverURL = res[i].CoverUrl
+		f.list.List[i].CoverURL = "http://10.168.1.166:9000/videos/oriental.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=CM831I4VFIC4J0DV5X7P%2F20230912%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230912T185431Z&X-Amz-Expires=604800&X-Amz-Security-Token=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiJDTTgzMUk0VkZJQzRKMERWNVg3UCIsImV4cCI6MTY5NDU2NzY5NiwicGFyZW50IjoibXltaW5pb2FkbWluIn0.YCCQTR9q1Qz0oIPuahclUJXa95p2e1aluPgybQicu2ETgGPQ-bNCNWne7PAYiACH2W-0TBXKePD4RNnQXJQs1Q&X-Amz-SignedHeaders=host&versionId=null&X-Amz-Signature=142bef7b93739f4bd50f828e29f1133a8a9a93cc767db87e61e2bfb2e5cd9ced"
 		f.list.List[i].FavoriteCount = res[i].FavoriteCount
 		f.list.List[i].CommentCount = res[i].CommentCount
 		f.list.List[i].Author = author
