@@ -7,9 +7,8 @@ import (
 )
 
 type QueryUserInfoFlow struct {
-	UserId         string          `json:"user_id"` // 状态码，0-成功，其他值-失败
-	Token          string          `json:"token"`   // 返回状态描述
-	UserInfoReturn *UserInfoReturn `json:"user"`    // 用户信息
+	UserId         string          `json:"user_id"`
+	UserInfoReturn *UserInfoReturn `json:"user"` // 用户信息
 }
 
 type UserInfoReturn struct {
@@ -37,9 +36,6 @@ func (f *QueryUserInfoFlow) prepareUserInfo() error {
 	if user == nil {
 		return errors.New("this user does not exist")
 	}
-	if f.Token != user.Token {
-		return errors.New("this token is incorrect")
-	}
 
 	f.UserInfoReturn.User = &User{}
 	f.UserInfoReturn.User.Avatar = user.Avatar
@@ -57,18 +53,18 @@ func (f *QueryUserInfoFlow) prepareUserInfo() error {
 	return nil
 }
 
-func UserInfoQuery(user_id, token string) *UserInfoReturn {
-	return NewQueryUserInfoFlow(user_id, token).Do()
+func UserInfoQuery(userId string) *UserInfoReturn {
+	return NewQueryUserInfoFlow(userId).Do()
 }
 
-func NewQueryUserInfoFlow(user_id, token string) *QueryUserInfoFlow {
-	return &QueryUserInfoFlow{UserId: user_id, Token: token}
+func NewQueryUserInfoFlow(userId string) *QueryUserInfoFlow {
+	return &QueryUserInfoFlow{UserId: userId}
 }
 
 func (f *QueryUserInfoFlow) Do() *UserInfoReturn {
 	f.UserInfoReturn = &UserInfoReturn{}
 
-	user := model.NewUserDaoInstance().QuerywithIdAndToken(f.UserId, f.Token)
+	user := model.NewUserDaoInstance().QuerywithIdAndToken(f.UserId)
 	if user == nil {
 		f.UserInfoReturn.State = false
 		return f.UserInfoReturn

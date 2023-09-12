@@ -1,6 +1,7 @@
 package router
 
 import (
+	"dy/controller"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -30,5 +31,6 @@ func DouyinUser(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"user_id": userId})
+	userInfo := controller.UserInfoQuery(strconv.FormatUint(userId, 10))
+	c.JSON(http.StatusOK, userInfo)
 }
