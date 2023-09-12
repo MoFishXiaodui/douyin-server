@@ -51,7 +51,7 @@ func (f *QueryUserInfoFlow) prepareUserInfo() error {
 	f.UserInfoReturn.User.IsFollow = user.IsFollow
 	f.UserInfoReturn.User.Name = user.UserName
 	f.UserInfoReturn.User.Signature = user.Signature
-	f.UserInfoReturn.User.TotalFavorited = user.TotalFavorited
+	f.UserInfoReturn.User.TotalFavorited = strconv.FormatInt(user.TotalFavorited, 10)
 	f.UserInfoReturn.User.WorkCount = user.WorkCount
 
 	return nil
