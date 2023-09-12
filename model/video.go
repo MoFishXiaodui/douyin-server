@@ -37,6 +37,15 @@ func VideoInit() error {
 	return db.AutoMigrate(&Video{})
 }
 
+func (dao *VideoDao) CreateNewVideo(title string, AuthorId uint, PlayUrl string) error {
+	res := db.Create(&Video{
+		AuthorId: AuthorId,
+		Title:    title,
+		PlayUrl:  PlayUrl,
+	})
+	return res.Error
+}
+
 func (dao *VideoDao) InsertNewVideo(Id, AuthorId uint, FavoriteCount, CommentCount int64, PlayUrl, CoverUrl, title string,
 ) error {
 	err := dao.DeleteDeletedVideo(Id)
