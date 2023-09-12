@@ -3,8 +3,9 @@ package controller
 import (
 	"dy/config"
 	"dy/service"
+	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"net/http"
+	"time"
 )
 
 type UserLoginRsp struct {
@@ -18,16 +19,19 @@ func UserLoginPost(username, password string) *UserLoginRsp {
 	res := &UserLoginRsp{}
 	userinfo := service.UserLogin(username, password)
 	if userinfo.State == false {
-		res.StatusCode = http.StatusForbidden
+		res.StatusCode = -1
 		res.StatusMsg = "用户名或密码出错"
 		return res
 	}
 
 	// token 签发
-	key := config.GetJWTconfig()
-	t := jwt.New(jwt.SigningMethodHS256)
-	s, err := t.SignedString(key)
+	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"UserId": userinfo.UserId,
+		"exp":    time.Now().Add(time.Hour * 24).Unix(),
+	})
+	tokenStr, err := t.SignedString(config.GetJWTconfig())
 	if err != nil {
+		_ = fmt.Errorf("token generating fail %v", err)
 		return &UserLoginRsp{
 			StatusCode: -1,
 			StatusMsg:  "token generating fail",
@@ -36,9 +40,9 @@ func UserLoginPost(username, password string) *UserLoginRsp {
 		}
 	}
 
-	res.StatusCode = http.StatusOK
+	res.StatusCode = 0
 	res.StatusMsg = "success"
 	res.UserId = userinfo.UserId
-	res.Token = s
+	res.Token = tokenStr
 	return res
 }
