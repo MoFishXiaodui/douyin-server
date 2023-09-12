@@ -9,6 +9,8 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"log"
+	"net/url"
+	"time"
 )
 
 // createClient 生成 MinioClient
@@ -57,4 +59,18 @@ func uploadFile(mc *minio.Client, ctx context.Context, bucketName, objectName, f
 		return nil, err
 	}
 	return &info, nil
+}
+
+func getPresignedObjUrl(mc *minio.Client, ctx context.Context, bucketName, objectName string, maxAgeSeconds uint64) (string, error) {
+	// Set request parameters for content-disposition.
+	reqParams := make(url.Values)
+	// 有关头部Content-Disposition字段说明可以查看 https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Content-Disposition
+	reqParams.Set("response-content-disposition", "inline")
+
+	// Generate URL
+	presignedURL, err := mc.PresignedGetObject(ctx, bucketName, objectName, time.Second*time.Duration(maxAgeSeconds), reqParams)
+	if err != nil {
+		return "", err
+	}
+	return presignedURL.String(), nil
 }

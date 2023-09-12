@@ -54,3 +54,9 @@ func generateRandomFilePre() string {
 	}
 	return string(result) + "/"
 }
+
+func (m *MinioDao) GetSignedURL(file_url string) (string, error) {
+	url, err := getPresignedObjUrl(MC, MCctx, "videos", file_url, 3600)
+	// 以后可以在出错时设置一个默认Url
+	return url, err
+}
