@@ -19,7 +19,7 @@ type User struct {
 	Avatar          string
 	BackgroundImage string
 	Signature       string
-	TotalFavorited  string
+	TotalFavorited  int64 `gorm:"default:0"`
 	WorkCount       int64 `gorm:"default:0"`
 	FavoriteCount   int64 `gorm:"default:0"`
 	Token           string
