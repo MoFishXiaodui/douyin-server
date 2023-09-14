@@ -26,7 +26,7 @@ func (m *MinioDao) UploadVideo(filename string, reader io.Reader, size int64) (u
 	count := 0
 	for {
 		// 使用 StatObject 检查对象是否存在
-		_, err := MC.StatObject(MCctx, "your-bucket-name", randomPre+filename, minio.StatObjectOptions{})
+		_, err := MC.StatObject(MCctx, "videos", randomPre+filename, minio.StatObjectOptions{})
 		if err != nil {
 			break
 		} else {
