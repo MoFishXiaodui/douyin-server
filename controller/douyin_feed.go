@@ -21,26 +21,29 @@ type DouyinFeed struct {
 
 func DouyinFeedGet(latestTimeStr, token string) *DouyinFeed {
 	res := &DouyinFeed{}
+	res.StatusMsg = "success"
+
 	latestTime, err := strconv.ParseInt(latestTimeStr, 10, 64)
+	if err != nil {
+		res.StatusCode = 0
+		res.StatusMsg = "时间戳格式错误，自动转换成当前时间"
+		res.NextTime = time.Now().Unix()
+	}
+	fmt.Println("err resStatusMsg", latestTimeStr, " -- ", latestTime)
 	if latestTime == 0 {
-		fmt.Println("zero")
 		latestTime = time.Now().Unix()
 	}
-	fmt.Println("latestTime", latestTime)
-	if err != nil {
-		res.StatusCode = http.StatusNotAcceptable
-		res.StatusMsg = "时间戳格式不正确"
-		return res
-	}
-	videoList, err := service.QueryListInfo(time.Unix(latestTime, 0))
+	videoList, nextTime, err := service.QueryListInfo(time.Unix(latestTime, 0))
 	if err != nil {
 		res.StatusCode = http.StatusInternalServerError
 		res.StatusMsg = "服务器发生未知错误"
+		res.NextTime = nextTime.Unix()
+		return res
+	} else {
+		res.StatusCode = 0
+		res.VideoList = videoList.List
+		res.NextTime = nextTime.Unix()
 	}
-	res.StatusCode = 0
-	res.StatusMsg = "success"
-	res.VideoList = videoList.List
 
-	res.NextTime = time.Now().Unix() // 尚未开发
 	return res
 }

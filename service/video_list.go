@@ -23,6 +23,7 @@ type Video struct {
 
 type QueryListInfoFlow struct {
 	LastTime time.Time
+	NextTime time.Time
 	list     *VideoList
 }
 
@@ -64,10 +65,11 @@ func (f *QueryListInfoFlow) prepareListInfo() (error, time.Time) {
 			minTime = res[i].CreatedAt
 		}
 	}
+	f.NextTime = minTime
 	return nil, minTime
 }
 
-func QueryListInfo(lastTime time.Time) (*VideoList, error) {
+func QueryListInfo(lastTime time.Time) (*VideoList, time.Time, error) {
 	return NewQueryListInfoFlow(lastTime).Do()
 }
 
@@ -75,12 +77,12 @@ func NewQueryListInfoFlow(lastTime time.Time) *QueryListInfoFlow {
 	return &QueryListInfoFlow{LastTime: lastTime}
 }
 
-func (f *QueryListInfoFlow) Do() (*VideoList, error) {
+func (f *QueryListInfoFlow) Do() (*VideoList, time.Time, error) {
 	if err := f.checkParam(); err != nil {
-		return nil, err
+		return nil, time.Time{}, err
 	}
-	if err, _ := f.prepareListInfo(); err != nil {
-		return nil, err
+	if err, nextTime := f.prepareListInfo(); err != nil {
+		return nil, nextTime, err
 	}
-	return f.list, nil
+	return f.list, f.NextTime, nil
 }
