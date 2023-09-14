@@ -44,7 +44,7 @@ func TestQuerywithIdAndToken(t *testing.T) {
 		t.Errorf("sth wrong happened when init MySQL: %v", err)
 		return
 	}
-	user := NewUserDaoInstance().QuerywithIdAndToken("3", "")
+	user := NewUserDaoInstance().QuerywithIdAndToken("3")
 	if user == nil {
 		t.Error("userInfoQuery error, user is nil")
 		return
