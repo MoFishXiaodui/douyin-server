@@ -26,6 +26,7 @@ func main() {
 	r.POST("/douyin/user/login/", router.DouyinUserLogin)                              // 用户登录
 	r.GET("/douyin/user/", middleware.UserAuth, router.DouyinUser)                     // 用户信息
 	r.POST("/douyin/publish/action/", middleware.UserAuth, router.DouyinPublishAction) // 投稿
+	r.GET("/douyin/publish/list/", middleware.UserAuth, router.DouyinPublishList)
 
-	r.Run() // 监听并在 0.0.0.0:8080 上启动服务
+	_ = r.Run() // 监听并在 0.0.0.0:8080 上启动服务
 }

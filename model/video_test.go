@@ -66,3 +66,15 @@ func TestVideoDao_DeleteDeletedVideo(t *testing.T) {
 	err := NewVideoDao().DeleteDeletedVideo(345)
 	assert.Equal(t, nil, err)
 }
+
+func TestVideoDao_QueryVideosByAuthorId(t *testing.T) {
+	_ = MySQLInit()
+	videos, err := NewVideoDao().QueryVideosByAuthorId(3)
+	if err != nil {
+		fmt.Println("d")
+		t.Error("unexpeted")
+	}
+	for _, video := range videos {
+		fmt.Printf("%#v\n", video)
+	}
+}

@@ -9,7 +9,7 @@ import (
 
 func TestQueryListInfo(t *testing.T) {
 	_ = model.MySQLInit()
-	videoList, err := QueryListInfo(time.Unix(1694333179, 0))
+	videoList, _, err := QueryListInfo(time.Unix(1694333179, 0))
 	if err != nil {
 		t.Errorf("出错了%v\n", err)
 	}

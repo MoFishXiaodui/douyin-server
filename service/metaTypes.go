@@ -4,6 +4,8 @@ type VideoList struct {
 	List []Video `json:"video_list"` // 视频列表
 }
 
+type VideoListDirect []Video
+
 type Video struct {
 	Author        User   `json:"author"`         // 视频作者信息
 	CommentCount  int64  `json:"comment_count"`  // 视频的评论总数

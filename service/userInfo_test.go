@@ -10,7 +10,7 @@ func TestUserInfoQuery(t *testing.T) {
 	if err != nil {
 		t.Errorf("sth wrong happened when init MySQL: %v", err)
 	}
-	userInfo1 := UserInfoQuery("3", "")
+	userInfo1 := UserInfoQuery("3")
 	if userInfo1 == nil {
 		t.Error("userInfo1 is nil")
 		return

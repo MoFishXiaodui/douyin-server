@@ -87,6 +87,15 @@ func (*VideoDao) QueryVideos() ([]Video, error) {
 	return results, nil
 }
 
+func (*VideoDao) QueryVideosByAuthorId(authorId uint) ([]Video, error) {
+	videos := []Video{}
+	res := db.Where(map[string]interface{}{"author_id": authorId}).Find(&videos)
+	if res.Error != nil {
+		return nil, errors.New("")
+	}
+	return videos, nil
+}
+
 func (*VideoDao) UpdateVideo(Id, AuthorId uint, FavoriteCount, CommentCount int64, PlayUrl, CoverUrl, title string,
 ) error {
 	video := &Video{Id: Id}
